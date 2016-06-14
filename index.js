@@ -1,6 +1,6 @@
 var fs = require('fs');
 // fetch the input geojson
-var obj = JSON.parse(fs.readFileSync('./tr-test.geojson', 'utf8'));
+var data = JSON.parse(fs.readFileSync('./tr-test.geojson', 'utf8'));
 var relID = []; // array to store unique relation ID
 var fromFeatureJSON;
 var relGroup ={
@@ -30,16 +30,17 @@ function constructJSON(fromFeature, trType, trID){
 
 // iterate through geojson to store unique relation ID
 
-obj.features.forEach(function(item){
+data.features.forEach(function(item){
 	
 if(item.properties["@relations"]!==undefined){
  for(i=0; i<item.properties["@relations"].length; i++)
  {
    if (relID.indexOf(item.properties["@relations"][i].rel) < 0)
    {
+   	 // if the relation ID is unique, store it to an array and check for the role
      relID.push(item.properties["@relations"][i].rel);
      if(relID.indexOf(item.properties["@relations"][i].role == 'from')){
-     	
+     	//construct a feature for 'from' object and push it to the relation Group
      	fromFeatureJSON = constructJSON(item, item.properties["@relations"][i].reltags["restriction"], item.properties["@relations"][i].rel);
      	relGroup.features.push(item);
 
@@ -50,11 +51,13 @@ if(item.properties["@relations"]!==undefined){
      }
 					 			
 	}
-	else
-	{
+   else // if the relation ID is not unique
+   {
+		//iterate through the relation Group to find the matching 'from' feature
 		relGroup.features.forEach(function(relItem){
 
 		 if(item.properties["@relations"][i].rel == relItem.properties.relID){
+		 	//push the object to 'relations' property of the 'from' feature
 		 	relItem.properties.relations.push(JSON.parse(JSON.stringify(item)));
 
 		 }
