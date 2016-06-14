@@ -24,6 +24,7 @@ function constructJSON(fromFeature, trType, trID){
  featureJSON.properties = fromFeature.properties;
  featureJSON.properties["TRtype"] = trType;
  featureJSON.properties["relID"] = trID;
+ featureJSON.properties["relations"] =[];
  return featureJSON;
 }
 
@@ -54,7 +55,7 @@ if(item.properties["@relations"]!==undefined){
 		relGroup.features.forEach(function(relItem){
 
 		 if(item.properties["@relations"][i].rel == relItem.properties.relID){
-		 	relItem.properties["relations"] = item;
+		 	relItem.properties.relations.push(JSON.parse(JSON.stringify(item)));
 
 		 }
 
@@ -66,7 +67,7 @@ if(item.properties["@relations"]!==undefined){
 
 });
 
-console.log(relGroup.features.length);
+console.log(JSON.stringify(relGroup));
 
 
 // console.log(relID);
