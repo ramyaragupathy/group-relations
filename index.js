@@ -9,7 +9,7 @@ var relGroup ={
  };
 
 
-function constructJSON(fromFeature){
+function constructJSON(fromFeature, trType, trID){
  var featureJSON = {
   "type": "Feature",
   "properties": {},
@@ -21,6 +21,9 @@ function constructJSON(fromFeature){
  };
 
  featureJSON.geometry.coordinates.push(fromFeature.geometry.coordinates);
+ featureJSON.properties = fromFeature.properties;
+ featureJSON.properties["TRtype"] = trType;
+ featureJSON.properties["relID"] = trID;
  return featureJSON;
 }
 
@@ -35,15 +38,27 @@ if(item.properties["@relations"]!==undefined){
    {
      relID.push(item.properties["@relations"][i].rel);
      if(relID.indexOf(item.properties["@relations"][i].role == 'from')){
-     	fromFeatureJSON = constructJSON(item);
-     	relGroup.features.push(fromFeatureJSON);
-       
-       
+     	
+     	fromFeatureJSON = constructJSON(item, item.properties["@relations"][i].reltags["restriction"], item.properties["@relations"][i].rel);
+     	relGroup.features.push(item);
 
 
+      }
+     else{
 
      }
 					 			
+	}
+	else
+	{
+		relGroup.features.forEach(function(relItem){
+
+		 if(item.properties["@relations"][i].rel == relItem.properties.relID){
+		 	relItem.properties["relations"] = item;
+
+		 }
+
+		});
 	}
  }
  	
@@ -51,10 +66,7 @@ if(item.properties["@relations"]!==undefined){
 
 });
 
-console.log(JSON.stringify(relGroup));
+console.log(relGroup.features.length);
 
-relID.forEach(function(item){
-
-});
 
 // console.log(relID);
