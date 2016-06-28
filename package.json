@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint index.js",
+    "lint:fix": "eslint index.js --fix"
   },
   "repository": {
     "type": "git",
@@ -14,5 +16,8 @@
   "license": "ISC",
   "dependencies": {
     "fs": "0.0.2"
+  },
+  "devDependencies": {
+    "eslint": "^2.12.0"
   }
 }
