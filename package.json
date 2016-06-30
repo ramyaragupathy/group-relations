@@ -1,7 +1,7 @@
 {
-  "name": "relGroup",
+  "name": "group-relations",
   "version": "1.0.0",
-  "description": "",
+  "description": "Group OSM turn restrictions based on unique relation IDs",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -10,12 +10,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "relGroup"
+    "url": "https://github.com/ramyaragupathy/group-relations"
   },
   "author": "Ramya",
   "license": "ISC",
   "dependencies": {
-    "fs": "0.0.2"
+    "fs": "0.0.2",
+    "minimist": "^1.2.0"
   },
   "devDependencies": {
     "eslint": "^2.12.0"

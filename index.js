@@ -1,6 +1,7 @@
 var fs = require('fs');
+var argv = require('minimist')(process.argv.slice(2));
 // fetch the input geojson
-var data = JSON.parse(fs.readFileSync('./ConditionalTR.geojson', 'utf8'));
+var data = JSON.parse(fs.readFileSync('./'+ argv.filename, 'utf8'));
 var relID = []; // array to store unique relation ID
 var fromFeatureJSON;
 var relGroup ={
