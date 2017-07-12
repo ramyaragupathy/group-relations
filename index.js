@@ -31,14 +31,18 @@ function groupRelation (item) {
           relID.push(item.properties['@relations'][i].rel);
            var featureJSON = {
                 'type': 'Feature',
-                'properties': {'type':'restriction','members':[]},
+                'properties': {'members':[]},
                 'geometry': {
                   "type": "GeometryCollection",
                   "geometries": []
                 }
             };
           featureJSON.properties['restriction:id'] = item.properties['@relations'][i].rel;
-          featureJSON.properties['restriction:details'] = item.properties['@relations'][i].reltags;
+          for (var property in item.properties['@relations'][i].reltags){
+            featureJSON.properties[property] = item.properties['@relations'][i].reltags[property];
+            //featureJSON.properties['"'+property+'"'] = item.properties['@relations'][i].reltags.property;
+            
+          }
           relGroup.features.push(featureJSON);
           relGroup.features.forEach(function(relItem){  //push the from item
             if(item.properties['@relations'][i].rel === relItem.properties['restriction:id']){
