@@ -12,4 +12,10 @@ This will give the restructured geojson output to `stdout`.
 
 This saves the restructured geojson to a file named `output.geojson`
 
+### TO DO
+
+- Remove indexing by `from` role
+- Add all properties from `reltags`
+- Ordering members within properties
+
 
