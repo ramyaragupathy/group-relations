@@ -19,66 +19,73 @@ function getRestriction(obj){
 
 }
 
-function setProperties(copyTo, copyFrom, relInfo){
 
-  copyTo.id = copyFrom.id;
-  copyTo.properties['name'] = copyFrom.properties.name;
-  copyTo.properties['label'] = relInfo.role;
-  copyTo.geometry.coordinates = copyFrom.geometry.coordinates;
-  copyTo.geometry.type = copyFrom.geometry.type;
 
-  if (relInfo.role === 'from') {
 
-    copyTo.properties['restriction:type'] = getRestriction(relInfo.reltags);
-    copyTo.properties['user'] = copyFrom.properties['@user'];
-    copyTo.properties['changeset'] = copyFrom.properties['@changeset'];
-    copyTo.properties['restriction:id'] = relInfo.rel;
-    copyTo.properties['relations'] =[];
-
-  }
-  return copyTo;
-}
-
-function constructJSON(fromFeature, relDetail){
-
-  var featureJSON = {
-    'type': 'Feature',
-    'id': '',
-    'properties': {},
-    'geometry': {
-      'coordinates': [],
-      'type': ''
-    }
-  };
-
-  featureJSON = setProperties(featureJSON, fromFeature, relDetail);
-  return featureJSON;
-
-}
 
 // iterate through geojson to store unique relation ID
 
 function groupRelation (item) {
     for (i=0; i<item.properties['@relations'].length; i++) {
-      if (item.properties['@relations'][i].role === 'from') {
-        if (relID.indexOf(item.properties['@relations'][i].rel) < 0) {
+      //console.log(item.properties['@relations'][i].rel);
+      if (item.properties['@relations'][i].role === 'from') { //from role
+        if (relID.indexOf(item.properties['@relations'][i].rel) < 0) { //ID already encountered
           relID.push(item.properties['@relations'][i].rel);
-          fromFeatureJSON = constructJSON(item, item.properties['@relations'][i]);
-          relGroup.features.push(fromFeatureJSON);
-        }
-      } else if (item.properties['@relations'][i].role !== 'from') {
-        relGroup.features.forEach(function(relItem){
-          if (item.properties['@relations'][i].rel === relItem.properties['restriction:id']) {
+           var featureJSON = {
+                'type': 'Feature',
+                'properties': {'type':'restriction'},
+                'geometry': {
+                  "type": "GeometryCollection",
+                  "geometries": []
+                }
+            };
+          featureJSON.properties['restriction:id'] = item.properties['@relations'][i].rel;
+          featureJSON.properties['restriction:type'] = getRestriction(item.properties['@relations'][i].reltags);
+          relGroup.features.push(featureJSON);
+          relGroup.features.forEach(function(relItem){  //push the from item
+            if(item.properties['@relations'][i].rel === relItem.properties['restriction:id']){
+               relItem.geometry.geometries.push(item.geometry);
+            }
+          });
+        } else { //ID already present
+          relGroup.features.forEach(function(relItem){  //push the from item
+            if(item.properties['@relations'][i].rel === relItem.properties['restriction:id']){
+               relItem.geometry.geometries.push(item.geometry);
+            }
+          });
 
-            fromFeatureJSON = constructJSON(item, item.properties['@relations'][i]);
-            //push the object to 'relations' property of the 'from' feature
-            relItem.properties.relations.push(fromFeatureJSON);
-          }
-        });
+        }
+      } else if (item.properties['@relations'][i].role !== 'from') {//not a from role
+        if (relID.indexOf(item.properties['@relations'][i].rel) < 0) { //check for ID
+          relID.push(item.properties['@relations'][i].rel);
+          var featureJSON = {
+                'type': 'Feature',
+                'properties': {'type':'restriction'},
+                'geometry': {
+                  "type": "GeometryCollection",
+                  "geometries": []
+                }
+            };
+          featureJSON.properties['restriction:id'] = item.properties['@relations'][i].rel;
+          featureJSON.properties['restriction:type'] = getRestriction(item.properties['@relations'][i].reltags);
+          
+          relGroup.features.push(featureJSON);
+          relGroup.features.forEach(function(relItem){
+            if(item.properties['@relations'][i].rel === relItem.properties['restriction:id']){
+               relItem.geometry.geometries.push(item.geometry);
+            }
+          });
+        } else { //ID not present
+          relGroup.features.forEach(function(relItem){
+            if (item.properties['@relations'][i].rel === relItem.properties['restriction:id']) {
+
+              relItem.geometry.geometries.push(item.geometry);
+            }
+          });
+      }
       }
     }
   }
-
 
 
 
@@ -95,12 +102,5 @@ data.features.forEach(function(item){
 }
 });
 
-
-relGroup.features.forEach(function(eachRel){
-  delete eachRel.properties['@relations'];
-  delete eachRel.properties['@id'];
-
-
-});
 
 console.log(JSON.stringify(relGroup));
