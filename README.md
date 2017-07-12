@@ -14,8 +14,8 @@ This saves the restructured geojson to a file named `output.geojson`
 
 ### TO DO
 
-- Remove indexing by `from` role
-- Add all properties from `reltags`
-- Ordering members within properties
+- [x] Remove indexing by `from` role
+- [x] Add all properties from `reltags`
+- [x] Ordering members within properties
 
 

@@ -40,8 +40,6 @@ function groupRelation (item) {
           featureJSON.properties['restriction:id'] = item.properties['@relations'][i].rel;
           for (var property in item.properties['@relations'][i].reltags){
             featureJSON.properties[property] = item.properties['@relations'][i].reltags[property];
-            //featureJSON.properties['"'+property+'"'] = item.properties['@relations'][i].reltags.property;
-            
           }
           relGroup.features.push(featureJSON);
           relGroup.features.forEach(function(relItem){  //push the from item

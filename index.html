@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8' />
+    <title></title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.38.0/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.38.0/mapbox-gl.css' rel='stylesheet' />
+    <style>
+        body { margin:0; padding:0; }
+        #map { position:absolute; top:0; bottom:0; width:100%; }
+    </style>
+</head>
+<body>
+
+<div id='map'></div>
+<script>
+mapboxgl.accessToken = 'pk.eyJ1IjoicmFteWFyYWd1cGF0aHkiLCJhIjoiOHRoa2JJTSJ9.6Y38XMOQL80LZyrUAjXgIg';
+var map = new mapboxgl.Map({
+    container: 'map', // container id
+    style: 'mapbox://styles/ramyaragupathy/cj50ufhiq0r3y2sof13xmgpy6', //stylesheet location
+    center: [-122.48552,37.76136], // starting position
+    zoom: 9, // starting zoom
+    hash:true
+});
+
+map.on('click', function (e) {
+    var features = map.queryRenderedFeatures(e.point); 
+    if (features.length > 0) {
+
+    var popupHTML = '<h5>View on OSM: ' + '<a href="http://www.openstreetmap.org/relation/' + features[0].properties["restriction:id"] +'">'+ features[0].properties["restriction:id"]+"</a>"+'</h5>';
+        if (features[0].properties["restriction:id"]!=undefined){
+            var popup = new mapboxgl.Popup()
+                                .setLngLat(e.lngLat)
+                                .setHTML(popupHTML)
+                                .addTo(map);
+
+        }
+    
+    }
+                       
+
+});
+
+</script>
+
+</body>
+</html>
